@@ -15,9 +15,7 @@ contract MlmSystem is Data, Ownable {
     }
 
     function isReflinkEnabled() public {
-        // if(){
-
-        // }
+        
     }
 
     function transfer(address payable _to) public payable {     
@@ -39,31 +37,4 @@ contract MlmSystem is Data, Ownable {
         msg.sender.transfer(amount);
     }
 
-
-
-
-
-
-
-
-    // External functions
-    // ...
-
-    // External functions that are view
-    // ...
-
-    // External functions that are pure
-    // ...
-
-    // Public functions
-    // ...
-
-    // Internal functions
-    // ...
-
-    // Private functions
-    // ...
-
-
-    //withdraw, invest, getPartners
 }
