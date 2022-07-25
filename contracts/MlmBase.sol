@@ -7,8 +7,8 @@ contract MlmSystem {
     uint256[10] levelInvestments;       // array with levels of investments according to the amount of ether
     uint256[10] levelComissions;        // array of comissions according to the level of the user
 
-    mapping (address => address[]) public partnersUsers;       // address of directPartner -> users who entered with his referalLink //referals
     mapping (address => uint256) public accountBalance;        // user address - balance of his account
+    mapping (address => address[]) public partnersUsers;       // address of directPartner -> users who entered with his referalLink //referals
     mapping (address => address) public referalOfTheUser;           // user - referal (who invited user) 
 
     constructor() {
@@ -29,7 +29,7 @@ contract MlmSystem {
     receive() payable external {}
     fallback() payable external {}
 
-    function invest(uint256 _amountInvest) public payable {
+    function invest(uint256 _amountInvest) external payable {
         require(_amountInvest >= MINIMUM_ENTER, "Didn't send enough");
         uint256 _comissionToContract = _amountInvest * 5 / 100;               // calculate the amount that should be invested to contract (5%)
         uint256 _valueToUser = _amountInvest - _comissionToContract;         // calculate the amount that left in user's balance after investing to contract (95%)
@@ -43,7 +43,7 @@ contract MlmSystem {
     }
 
     // money to user from his account
-    function withdraw() public returns(bool) {
+    function withdraw() external returns(bool) {
         uint _userBalance = accountBalance[msg.sender];
         require(_userBalance > 0, "Your current balance is 0");
 
@@ -56,7 +56,7 @@ contract MlmSystem {
             while(_current != address(0)) {
                 _counterDepth++;
                 _current = referalOfTheUser[msg.sender];
-                _comission = _userBalance * levelComissions[_getLevel(_current)] / getPercentage;    // value / 10 (to get value of comission)
+                _comission = _userBalance * levelComissions[getLevel(_current)] / getPercentage;    // value / 10 (to get value of comission)
                 (bool success, ) = payable(_current).call{value: _comission}("");
                 require(success, "Transfer failed");
                 _userBalance -= _comission;
@@ -70,7 +70,7 @@ contract MlmSystem {
         return true;
     }
 
-    function logIn(address _referalLink) private {   
+    function logIn(address _referalLink) external {             // rrgistration
         if(_referalLink != address(0)) {    
             partnersUsers[_referalLink].push(msg.sender);       // add user to array of people who entered with referal link of the partner
             accountBalance[msg.sender] = 0;                 
@@ -80,23 +80,23 @@ contract MlmSystem {
         }
     }
 
-    function _getLevel(address _userAddress) private view returns(uint256) {
+     // user can see the amount of direct partners and their level
+    function directPartnersInfo() external view returns(uint, uint[] memory) {
+        uint[] memory _partnersLevel;
+        address[] memory _partnersAddresses = partnersUsers[msg.sender];    // array with partners' addresses of the user
+        for(uint i = 0; i<partnersUsers[msg.sender].length; i++){
+            _partnersLevel[i] = getLevel(_partnersAddresses[i]);           // get level of every partner of the user
+        }
+        return(partnersUsers[msg.sender].length, _partnersLevel);
+    }
+
+    function getLevel(address _userAddress) public view returns(uint256) {
         for(uint i = 1; i<levelInvestments.length; i++) {   
             if (accountBalance[_userAddress] <= levelInvestments[i] &&          //checkick that the user's account
                 accountBalance[_userAddress] >= levelInvestments[i-1]) {        // between 2 levels
                 return i-1;     // return level of the user
             }
         }
-    }
-
-    // user can see the amount of direct partners and their level
-    function _directPartnersInfo() private view returns(uint, uint[] memory) {
-        uint[] memory _partnersLevel;
-        address[] memory _partnersAddresses = partnersUsers[msg.sender];    // array with partners' addresses of the user
-        for(uint i = 0; i<partnersUsers[msg.sender].length; i++){
-            _partnersLevel[i] = _getLevel(_partnersAddresses[i]);           // get level of every partner of the user
-        }
-        return(partnersUsers[msg.sender].length, _partnersLevel);
     }
 
 }
