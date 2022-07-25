@@ -1,19 +1,27 @@
-const {ethers, network} = require("hardhat");
-require("dotenv").config()
-require("console")
+const {ethers} = require("hardhat");
 
 async function main () {
-    const MlmBase = await ethers.getContractFactory(
-        "MlmBase"
+    const [deployer] = await ethers.getSigners()
+    console.log(
+      "Deploying contracts with the account:",
+      deployer.address
     )
+    const MlmBase = await ethers.getContractFactory("MlmSystem")
     console.log("Deploying contract...")
-    const mlmBaseSystem = MlmBase.deploy()
+    const mlmBaseSystem = await MlmBase.deploy()
     await mlmBaseSystem.deployed()
-    console.log(`Deployed contract to ${mlmBaseSystem.address}`)
+    console.log("Deployed contract to", mlmBaseSystem.address)
 }
 
-module.exports = async({getNameAccounts, deployments}) => {
-    const {deploy, log} = deployments
-    const {deployer} = await getNameAccounts()
-    const chainId = network.config.chainId
-};
+module.exports = async ({ getNamedAccounts, deployments }) => {
+  const { deploy, log } = deployments
+  const { deployer } = await ethers.getSigners()
+  const chainId = network.config.chainId
+}
+
+main()
+  .then(() => process.exit(0))
+  .catch((error) => {
+    console.error(error)
+    process.exit(1)
+  })

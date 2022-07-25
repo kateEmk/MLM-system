@@ -1,5 +1,4 @@
 require('@nomiclabs/hardhat-ethers');
-require("@nomiclabs/hardhat-waffle")
 require("dotenv").config()
 require("hardhat-deploy");
 
