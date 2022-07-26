@@ -9,7 +9,7 @@ contract MlmSystem {
 
     mapping (address => uint256) public accountBalance;        // user address - balance of his account
     mapping (address => address[]) public partnersUsers;       // address of directPartner -> users who entered with his referalLink //referals
-    mapping (address => address) public referalOfTheUser;           // user - referal (who invited user) 
+    mapping (address => address) public referalOfTheUser;      // user - referal (who invited user) 
 
     constructor() {
         MINIMUM_ENTER = 0.005 ether;
@@ -29,20 +29,18 @@ contract MlmSystem {
     receive() payable external {}
     fallback() payable external {}
 
-    function invest(uint256 _amountInvest) external payable {
-        require(_amountInvest >= MINIMUM_ENTER, "Didn't send enough");
-        uint256 _comissionToContract = _amountInvest * 5 / 100;               // calculate the amount that should be invested to contract (5%)
-        uint256 _valueToUser = _amountInvest - _comissionToContract;         // calculate the amount that left in user's balance after investing to contract (95%)
+    /** @notice Function to invest funds to the account    
+     */
+    function invest() external payable {
+        require(msg.value >= MINIMUM_ENTER, "Didn't send enough");
+        uint256 _comissionToContract = msg.value * 5 / 100;             // calculate the amount that should be invested to contract (5%)
+        uint256 _valueToUser = msg.value - _comissionToContract;        // calculate the amount that left in user's balance after investing to contract (95%)
 
-        (bool successToUser, ) = payable(msg.sender).call{value: _valueToUser}("");
-        require(successToUser, "Transfer failed");
-        accountBalance[msg.sender] += _valueToUser;
-
-        (bool sucessToContract, ) = payable(address(this)).call{value: _comissionToContract}("");
-        require(sucessToContract, "Transfer failed");
+        accountBalance[msg.sender] += _valueToUser;                     // change balance afther investing
     }
 
-    // money to user from his account
+    /** @notice Function to withdraw funds from the account and send comissions according to the depth of referals
+    */
     function withdraw() external returns(bool) {
         uint _userBalance = accountBalance[msg.sender];
         require(_userBalance > 0, "Your current balance is 0");
@@ -52,7 +50,7 @@ contract MlmSystem {
         uint _counterDepth = 0;
         uint _comission = 0;
     
-        for (uint i = 0; i<10; i++) {
+        for (uint i = 0; i<10; i++) {              // calculate the depth of the referals
             while(_current != address(0)) {
                 _counterDepth++;
                 _current = referalOfTheUser[msg.sender];
@@ -63,33 +61,38 @@ contract MlmSystem {
             }
         }
 
-        (bool successUser, ) = payable(msg.sender).call{value: _userBalance}("");
+        (bool successUser, ) = payable(msg.sender).call{value: _userBalance}("");       // withdraw funds
         require(successUser, "Transfer failed");
         accountBalance[msg.sender] = 0;
 
         return true;
     }
 
-    function logIn(address _referalLink) external {             // rrgistration
+    /** @notice Function to registrate in the system
+    *   @param _referalLink Referal link (if exists) by which the user registers
+    */
+    function logIn(address _referalLink) external {             
         if(_referalLink != address(0)) {    
-            partnersUsers[_referalLink].push(msg.sender);       // add user to array of people who entered with referal link of the partner
-            accountBalance[msg.sender] = 0;                 
+            partnersUsers[_referalLink].push(msg.sender);       // add user to array of people who entered with referal link of the partner              
         } else {
             partnersUsers[msg.sender].push(address(0));         // create new direct partner (referal link = address of new user)
-            accountBalance[msg.sender] = 0;  
         }
     }
 
-     // user can see the amount of direct partners and their level
+    /** @notice Function to see by address of the user amount of direct partners and their levels
+    */
     function directPartnersInfo() external view returns(uint, uint[] memory) {
         uint[] memory _partnersLevel;
         address[] memory _partnersAddresses = partnersUsers[msg.sender];    // array with partners' addresses of the user
         for(uint i = 0; i<partnersUsers[msg.sender].length; i++){
-            _partnersLevel[i] = getLevel(_partnersAddresses[i]);           // get level of every partner of the user
+            _partnersLevel[i] = getLevel(_partnersAddresses[i]);            // get level of every partner of the user
         }
         return(partnersUsers[msg.sender].length, _partnersLevel);
     }
 
+    /** @notice Function to get level of the user according to the amount of his investments
+    *   @param _userAddress Address of the user 
+    */
     function getLevel(address _userAddress) public view returns(uint256) {
         for(uint i = 1; i<levelInvestments.length; i++) {   
             if (accountBalance[_userAddress] <= levelInvestments[i] &&          //checkick that the user's account

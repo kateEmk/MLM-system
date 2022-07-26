@@ -1,5 +1,5 @@
 Arguments: 
-  /usr/local/bin/node /Users/ekaterinaermacenok/.node/corepack/yarn/1.22.15/bin/yarn.js add deploy-MLM.js
+  /usr/local/bin/node /Users/ekaterinaermacenok/.node/corepack/yarn/1.22.15/bin/yarn.js add --dev ethereum-uint-converter
 
 PATH: 
   /usr/local/bin:/opt/local/bin:/opt/local/sbin:/Library/Frameworks/Python.framework/Versions/3.9/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/share/dotnet:/opt/X11/bin:~/.dotnet/tools:/Library/Apple/usr/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/Users/ekaterinaermacenok/opt/anaconda3/bin:/Users/ekaterinaermacenok/opt/anaconda3/condabin:/opt/local/bin:/opt/local/sbin:/Library/Frameworks/Python.framework/Versions/3.9/bin
@@ -14,7 +14,7 @@ Platform:
   darwin x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/deploy-MLM.js: Not found
+  Error: https://registry.yarnpkg.com/ethereum-uint-converter: Not found
       at Request.params.callback [as _callback] (/Users/ekaterinaermacenok/.node/corepack/yarn/1.22.15/lib/cli.js:66140:18)
       at Request.self.callback (/Users/ekaterinaermacenok/.node/corepack/yarn/1.22.15/lib/cli.js:140885:22)
       at Request.emit (node:events:527:28)
@@ -2395,7 +2395,7 @@ Lockfile:
   
   chai@^4.3.6:
     version "4.3.6"
-    resolved "https://registry.npmjs.org/chai/-/chai-4.3.6.tgz"
+    resolved "https://registry.yarnpkg.com/chai/-/chai-4.3.6.tgz#ffe4ba2d9fa9d6680cc0b370adae709ec9011e9c"
     integrity sha512-bbcp3YfHCUzMOvKqsztczerVgBKSsEijCySNlHHbX3VG1nskvqjz5Rfso1gGwD6w6oOV3eI60pKuMOV5MV7p3Q==
     dependencies:
       assertion-error "^1.1.0"
@@ -3514,7 +3514,7 @@ Lockfile:
   
   ethereum-waffle@^3.4.4:
     version "3.4.4"
-    resolved "https://registry.npmjs.org/ethereum-waffle/-/ethereum-waffle-3.4.4.tgz"
+    resolved "https://registry.yarnpkg.com/ethereum-waffle/-/ethereum-waffle-3.4.4.tgz#1378b72040697857b7f5e8f473ca8f97a37b5840"
     integrity sha512-PA9+jCjw4WC3Oc5ocSMBj5sXvueWQeAbvCA+hUlb6oFgwwKyq5ka3bWQ7QZcjzIX+TdFkxP4IbFmoY2D8Dkj9Q==
     dependencies:
       "@ethereum-waffle/chai" "^3.4.4"

@@ -3446,7 +3446,7 @@ ethereum-cryptography@^1.0.3:
 
 ethereum-waffle@^3.4.4:
   version "3.4.4"
-  resolved "https://registry.npmjs.org/ethereum-waffle/-/ethereum-waffle-3.4.4.tgz"
+  resolved "https://registry.yarnpkg.com/ethereum-waffle/-/ethereum-waffle-3.4.4.tgz#1378b72040697857b7f5e8f473ca8f97a37b5840"
   integrity sha512-PA9+jCjw4WC3Oc5ocSMBj5sXvueWQeAbvCA+hUlb6oFgwwKyq5ka3bWQ7QZcjzIX+TdFkxP4IbFmoY2D8Dkj9Q==
   dependencies:
     "@ethereum-waffle/chai" "^3.4.4"
