@@ -40,6 +40,7 @@ contract MlmSystem {
     }
 
     /** @notice Function to withdraw funds from the account and send comissions according to the depth of referals
+        @return Boolean value that withdraw function was executed correctly
     */
     function withdraw() external returns(bool) {
         uint _userBalance = accountBalance[msg.sender];
@@ -80,6 +81,7 @@ contract MlmSystem {
     }
 
     /** @notice Function to see by address of the user amount of direct partners and their levels
+        @return Function returns the amount of direct partners and array with their levels
     */
     function directPartnersInfo() external view returns(uint, uint[] memory) {
         uint[] memory _partnersLevel;
@@ -92,6 +94,7 @@ contract MlmSystem {
 
     /** @notice Function to get level of the user according to the amount of his investments
     *   @param _userAddress Address of the user 
+        @return Function returns level of the user in the system
     */
     function getLevel(address _userAddress) public view returns(uint256) {
         for(uint i = 1; i<levelInvestments.length; i++) {   
