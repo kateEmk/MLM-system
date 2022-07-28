@@ -5,7 +5,7 @@ contract MlmSystem {
 
     uint64 MINIMUM_ENTER;               // minimum amount to log in into system
     uint256[10] levelInvestments;       // array with levels of investments according to the amount of ether
-    uint256[10] levelComissions;        // array of comissions according to the level of the user
+    uint256[10] public levelComissions;        // array of comissions according to the level of the user
 
     mapping (address => uint256) public accountBalance;        // user address - balance of his account
     mapping (address => address[]) public partnersUsers;       // address of directPartner -> users who entered with his referalLink //referals
@@ -34,15 +34,14 @@ contract MlmSystem {
     function invest() external payable {
         require(msg.value >= MINIMUM_ENTER, "Didn't send enough");
         uint256 _comissionToContract = msg.value * 5 / 100;             // calculate the amount that should be invested to contract (5%)
-        uint256 _valueToUser = msg.value - _comissionToContract;        // calculate the amount that left in user's balance after investing to contract (95%)
 
-        accountBalance[msg.sender] += _valueToUser;                     // change balance afther investing
+        accountBalance[msg.sender] += msg.value - _comissionToContract;                     // change balance afther investing
     }
 
     /** @notice Function to withdraw funds from the account and send comissions according to the depth of referals
         @return Boolean value that withdraw function was executed correctly
     */
-    function withdraw() external returns(bool) {
+    function withdraw() external payable returns(bool) {
         uint _userBalance = accountBalance[msg.sender];
         require(_userBalance > 0, "Your current balance is 0");
 
@@ -62,9 +61,11 @@ contract MlmSystem {
             }
         }
 
-        (bool successUser, ) = payable(msg.sender).call{value: _userBalance}("");       // withdraw funds
-        require(successUser, "Transfer failed");
         accountBalance[msg.sender] = 0;
+
+        //(bool successUser, ) = payable(msg.sender).call{value: _userBalance}("");       // withdraw funds
+        (bool successUser, ) = payable(address(this)).call{value: _userBalance}(""); 
+        require(successUser, "Transfer failed");
 
         return true;
     }
@@ -97,12 +98,12 @@ contract MlmSystem {
         @return Function returns level of the user in the system
     */
     function getLevel(address _userAddress) public view returns(uint256) {
-        for(uint i = 1; i<levelInvestments.length; i++) {   
-            if (accountBalance[_userAddress] <= levelInvestments[i] &&          //checkick that the user's account
-                accountBalance[_userAddress] >= levelInvestments[i-1]) {        // between 2 levels
-                return i-1;     // return level of the user
+        for(uint256 i = 0; i < levelInvestments.length - 1; i++) {
+            if(accountBalance[_userAddress] < levelInvestments[i]) {
+                return i + 1;
             }
         }
+        return levelInvestments.length;
     }
 
 }
