@@ -41,7 +41,7 @@ contract MlmSystem {
     /** @notice Function to withdraw funds from the account and send comissions according to the depth of referals
         @return Boolean value that withdraw function was executed correctly
     */
-    function withdraw() external payable returns(bool) {
+    function withdraw() external returns(bool) {
         uint _userBalance = accountBalance[msg.sender];
         require(_userBalance > 0, "Your current balance is 0");
 
