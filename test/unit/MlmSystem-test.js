@@ -1,6 +1,7 @@
 const { ethers, network, deployments } = require("hardhat")
 const { expect, assert, use } = require("chai")
 const { Contract, signer, utils } = require("ethers")
+const { exp } = require("prelude-ls")
 
 require("@nomiclabs/hardhat-waffle")
 
@@ -8,10 +9,10 @@ describe("MlmSystem", function() {
 
     let user1, user2, user3, user4, user5, user2_2, user2_3, mlmSystem, levelComissions
 
-    before(async function () {
+    beforeEach(async function () {
         [owner, user1, user2, user3, user4, user5, user2_2, user2_3] = await ethers.getSigners()
         const mlmSystemFactory = await ethers.getContractFactory("MlmSystem")
-        mlmSystem = await mlmSystemFactory.deploy()
+        mlmSystem = await upgrades.deployProxy(mlmSystemFactory, [])
         await mlmSystem.deployed()
         console.log("Contract address:", mlmSystem.address)
 
@@ -26,6 +27,15 @@ describe("MlmSystem", function() {
         await mlmSystem.connect(user4).logIn(user3.address)
         await mlmSystem.connect(user5).logIn(user4.address)
     })
+
+    function equalArrays(a,b) {
+        if (a.length != b.length) return false; // Мас­си­вы раз­ной дли­ны не рав­ны
+      
+        for(var i = 0; i < a.length; i++) // Цикл по всем эле­мен­там
+            if (a[i] !== b[i]) return false; // Ес­ли хоть один эле­мент от­ли­ча­ет­ся, мас­си­вы не рав­ны
+      
+        return true; // Ина­че они рав­ны
+      }
 
     it("User has 0 ether by default", async function() {
         const accBalance = await ethers.provider.getBalance(mlmSystem.address)
@@ -88,21 +98,17 @@ describe("MlmSystem", function() {
     })
 
     it("It should return the info about direct partners", async function() {
-        let partners = [user2.address, user2_2.address, user2_3.address]
-        let amount = partners.length
-        let levelsPartners = []
         let levelsDone = [5, 1, 1]
-
-        for(let i = 0; i < amount; i++) {
-            const tx = await mlmSystem.getLevel(partners[i])
-            levelsPartners.push(tx.toString())
-            expect(tx).to.equal(levelsDone[i])
-        }
         
-        console.log("Amount of partners:", amount.toString())
-        console.log("Levels of array:", levelsPartners)
+        const tx = await mlmSystem.connect(user1).directPartnersInfo()
+        let amount = tx[0]
+        let levelsPartners = tx[1]
+        console.log(amount)
+        let levelsPartners2 = levelsPartners.map(item => item.toString() )
+        console.log(levelsPartners2)
 
-        expect(amount).to.equal(3)
+        expect(equalArrays(levelsDone, levelsPartners)).to.eq(true)
+        expect(levelsPartners.length).to.equal(amount)
     })
 
 })
