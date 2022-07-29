@@ -18,7 +18,7 @@ async function main() {
                    ethers.utils.parseEther("5")], 
                   [10, 7, 5, 2, 1, 1, 1, 1, 1, 1]
                 ],
-                {initializer: "initializeInitialValues"}, 
+                {initializer: "initialize"}, 
   );
   await mlmsSystemProxyDeploy.deployed();
   console.log(mlmsSystemProxyDeploy.address)
