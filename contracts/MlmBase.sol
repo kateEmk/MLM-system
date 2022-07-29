@@ -13,7 +13,7 @@ contract MlmSystem is Initializable {
     mapping (address => address[]) public partnersUsers;       // address of directPartner -> users who entered with his referalLink //referals
     mapping (address => address) public referalOfTheUser;      // user - referal (who invited user) 
 
-    function initializeInitialValues(uint64 _MINIMUM_ENTER, uint64[10] memory _levelInvestments, uint8[10] memory _levelComissions) public initializer {
+    function initialize(uint64 _MINIMUM_ENTER, uint64[10] memory _levelInvestments, uint8[10] memory _levelComissions) public initializer {
         MINIMUM_ENTER = _MINIMUM_ENTER;
         levelInvestments = _levelInvestments;
         levelComissions = _levelComissions; 

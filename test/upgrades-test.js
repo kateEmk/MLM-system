@@ -23,15 +23,9 @@ describe('MlmSystem (proxy)', function () {
         ],
         {initializer: "initializeInitialValues"})
   })
-//   it('retrieve returns a value previously initialized', async function () {
-//     expect((await box.retrieve()).toString()).to.equal('42')
-//     expect(() => { box.increment() }).to.throw(TypeError)
-//   })
+
   it('upgrades', async function () {
     const MlmSystemV2 = await ethers.getContractFactory("MlmSystemV2")
     mlmSystemFactory = await upgrades.upgradeProxy(mlmSystemFactory.address, MlmSystemV2)
-    //await mlmSystemFactory.increment()
-    //let result = await box.retrieve()
-    //expect(result).to.equal(43)
   })
 })
