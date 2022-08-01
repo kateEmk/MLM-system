@@ -35,17 +35,17 @@ describe("MlmSystem", function() {
             if (a[i] !== b[i]) return false; // Ес­ли хоть один эле­мент от­ли­ча­ет­ся, мас­си­вы не рав­ны
       
         return true; // Ина­че они рав­ны
-      }
+    }
 
-    it("User has 0 ether by default", async function() {
+    it("User has 0 tokens by default", async function() {
         const accBalance = await ethers.provider.getBalance(mlmSystem.address)
-        console.log("Starting balance:", accBalance.toString())
-        expect(accBalance).to.eq(0)
+        console.log("Starting b(alance:", accBalance.toString())
+        expect(accBalance.to.eq(0))
     })
 
     it("Should check minimal invest", async function() {
         const amount = 0.006
-        expect(amount>=0.005).to.eq(true)
+        expect(amount >= 0.005).to.eq(true)
         console.log("Does minimal amount '>=' 0.005? ->", amount>=0.005)
     })
 
