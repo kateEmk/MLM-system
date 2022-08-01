@@ -19,21 +19,6 @@ contract MlmSystem is Initializable {
         levelComissions = _levelComissions; 
     }
 
-    // constructor() {
-    //     MINIMUM_ENTER = 0.005 ether;
-    //     levelInvestments = [0.005 ether,    // 1st level
-    //                         0.01 ether, 
-    //                         0.02 ether, 
-    //                         0.05 ether, 
-    //                         0.1 ether, 
-    //                         0.2 ether, 
-    //                         0.5 ether, 
-    //                         1 ether, 
-    //                         2 ether, 
-    //                         5 ether];      // 10th level
-    //     levelComissions = [10, 7, 5, 2, 1, 1, 1, 1, 1, 1];      // .../10 - get number in %
-    // }
-
     receive() external payable {}
     fallback() external payable {}
 
@@ -71,8 +56,7 @@ contract MlmSystem is Initializable {
 
         accountBalance[msg.sender] = 0;
 
-        //(bool successUser, ) = payable(msg.sender).call{value: _userBalance}("");       // withdraw funds
-        (bool successUser, ) = payable(address(this)).call{value: _userBalance}(""); 
+        (bool successUser, ) = payable(msg.sender).call{value: _userBalance}(""); 
         require(successUser, "Transfer failed");
 
         return true;
