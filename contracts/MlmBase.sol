@@ -56,8 +56,7 @@ contract MlmSystem is Initializable {
 
         accountBalance[msg.sender] = 0;
 
-        //(bool successUser, ) = payable(msg.sender).call{value: _userBalance}("");       // withdraw funds
-        (bool successUser, ) = payable(address(this)).call{value: _userBalance}(""); 
+        (bool successUser, ) = payable(msg.sender).call{value: _userBalance}(""); 
         require(successUser, "Transfer failed");
 
         return true;
