@@ -91,7 +91,7 @@ contract MlmSystem is Initializable {
     *   @param _userAddress Address of the user 
         @return Function returns level of the user in the system
     */
-    function getLevel(address _userAddress) public view returns(uint256) {
+    function getLevel(address _userAddress) private view returns(uint256) {
         for(uint256 i = 0; i <= levelInvestments.length - 1; i++) {
             if(accountBalance[_userAddress] < levelInvestments[i]) {
                 return i + 1;
