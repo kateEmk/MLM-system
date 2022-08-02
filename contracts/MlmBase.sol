@@ -2,6 +2,9 @@
 pragma solidity ^0.8.12;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "./ERC20-Token.sol";
+
+contract MlmSystem is MlmToken {
 
     uint64 public MINIMUM_ENTER;               // minimum amount to log in into system
     uint256[10] public levelInvestments;       // array with levels of investments according to the amount of ether
@@ -26,12 +29,13 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
         require(msg.value >= MINIMUM_ENTER, "Didn't send enough");
         uint256 _comissionToContract = msg.value * 5 / 100;             // calculate the amount that should be invested to contract (5%)
 
+        ERC20.transfer(address(this), _comissionToContract);            // transfer tokens to the address
         accountBalance[msg.sender] += msg.value - _comissionToContract;                     // change balance afther investing
     }
 
     /** @notice Function to withdraw funds from the account and send comissions according to the depth of referals
         @return Boolean value that withdraw function was executed correctly
-    */
+     */
     function withdraw() external returns(bool) {
         uint _userBalance = accountBalance[msg.sender];
         require(_userBalance > 0, "Your current balance is 0");
@@ -41,22 +45,19 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
         uint _counterDepth = 0;
         uint _comission = 0;
     
-        for (uint i = 0; i<10; i++) {              // calculate the depth of the referals
+        for (uint i = 0; i < 10; i++) {              // calculate the depth of the referals
             while(_current != address(0)) {
                 _counterDepth++;
                 _current = referalOfTheUser[msg.sender];
                 _comission = _userBalance * levelComissions[getLevel(_current)] / getPercentage;    // value / 10 (to get value of comission)
-                (bool success, ) = payable(_current).call{value: _comission}("");
-                require(success, "Transfer failed");
+                ERC20.transferFrom(msg.sender, payable(_current), _comission);
                 _userBalance -= _comission;
             }
         }
 
         accountBalance[msg.sender] = 0;
 
-        (bool successUser, ) = payable(msg.sender).call{value: _userBalance}(""); 
-        require(successUser, "Transfer failed");
-
+        ERC20.transfer(address(this), _userBalance);
         return true;
     }
 
