@@ -1,29 +1,22 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.12;
 
-contract MlmSystem {
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
+contract MlmSystem is Initializable {
+
+    uint8[10] public levelComissions;        // array of comissions according to the level of the user
     uint64 public MINIMUM_ENTER;               // minimum amount to log in into system
-    uint256[10] public levelInvestments;       // array with levels of investments according to the amount of ether
-    uint256[10] public levelComissions;        // array of comissions according to the level of the user
+    uint64[10] public levelInvestments;       // array with levels of investments according to the amount of ether
 
     mapping (address => uint256) public accountBalance;        // user address - balance of his account
     mapping (address => address[]) public partnersUsers;       // address of directPartner -> users who entered with his referalLink //referals
     mapping (address => address) public referalOfTheUser;      // user - referal (who invited user) 
 
-    constructor() {
-        MINIMUM_ENTER = 0.005 ether;
-        levelInvestments = [0.005 ether,    // 1st level
-                            0.01 ether, 
-                            0.02 ether, 
-                            0.05 ether, 
-                            0.1 ether, 
-                            0.2 ether, 
-                            0.5 ether, 
-                            1 ether, 
-                            2 ether, 
-                            5 ether];      // 10th level
-        levelComissions = [10, 7, 5, 2, 1, 1, 1, 1, 1, 1];      // .../10 - get number in %
+    function initialize(uint64 _MINIMUM_ENTER, uint64[10] memory _levelInvestments, uint8[10] memory _levelComissions) external initializer {
+        MINIMUM_ENTER = _MINIMUM_ENTER;
+        levelInvestments = _levelInvestments;
+        levelComissions = _levelComissions; 
     }
 
     receive() external payable {}
@@ -63,8 +56,7 @@ contract MlmSystem {
 
         accountBalance[msg.sender] = 0;
 
-        //(bool successUser, ) = payable(msg.sender).call{value: _userBalance}("");       // withdraw funds
-        (bool successUser, ) = payable(address(this)).call{value: _userBalance}(""); 
+        (bool successUser, ) = payable(msg.sender).call{value: _userBalance}(""); 
         require(successUser, "Transfer failed");
 
         return true;
@@ -99,7 +91,7 @@ contract MlmSystem {
     *   @param _userAddress Address of the user 
         @return Function returns level of the user in the system
     */
-    function getLevel(address _userAddress) public view returns(uint256) {
+    function getLevel(address _userAddress) private view returns(uint256) {
         for(uint256 i = 0; i <= levelInvestments.length - 1; i++) {
             if(accountBalance[_userAddress] < levelInvestments[i]) {
                 return i + 1;
