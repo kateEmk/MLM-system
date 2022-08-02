@@ -4,7 +4,9 @@ pragma solidity ^0.8.12;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "./ERC20-Token.sol";
 
-contract MlmSystem is MlmToken {
+contract MlmSystem {
+
+    MlmToken tokenMLM;
 
     uint64 public MINIMUM_ENTER;               // minimum amount to log in into system
     uint256[10] public levelInvestments;       // array with levels of investments according to the amount of ether
@@ -29,7 +31,7 @@ contract MlmSystem is MlmToken {
         require(msg.value >= MINIMUM_ENTER, "Didn't send enough");
         uint256 _comissionToContract = msg.value * 5 / 100;             // calculate the amount that should be invested to contract (5%)
 
-        ERC20.transfer(address(this), _comissionToContract);            // transfer tokens to the address
+        tokenMLM.transfer(address(this), _comissionToContract);            // transfer tokens to the address
         accountBalance[msg.sender] += msg.value - _comissionToContract;                     // change balance afther investing
     }
 
@@ -50,14 +52,14 @@ contract MlmSystem is MlmToken {
                 _counterDepth++;
                 _current = referalOfTheUser[msg.sender];
                 _comission = _userBalance * levelComissions[getLevel(_current)] / getPercentage;    // value / 10 (to get value of comission)
-                ERC20.transferFrom(msg.sender, payable(_current), _comission);
+                tokenMLM.transferFrom(msg.sender, payable(_current), _comission);
                 _userBalance -= _comission;
             }
         }
 
         accountBalance[msg.sender] = 0;
 
-        ERC20.transfer(address(this), _userBalance);
+        tokenMLM.transfer(address(this), _userBalance);
         return true;
     }
 
