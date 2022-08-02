@@ -2,7 +2,7 @@
 pragma solidity ^0.8.12;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "./ERC20-Token.sol";
+import "./MlmToken.sol";
 
 contract MlmSystem {
 
@@ -20,6 +20,21 @@ contract MlmSystem {
         MINIMUM_ENTER = _MINIMUM_ENTER;
         levelInvestments = _levelInvestments;
         levelComissions = _levelComissions; 
+        tokenMLM = MlmToken(tokenAddress);
+    // constructor(address tokenAddress) {
+    //     tokenMLM = MlmToken(tokenAddress);
+    //     MINIMUM_ENTER = 0.005 ether;
+    //     levelInvestments = [0.005 ether,    // 1st level
+    //                         0.01 ether, 
+    //                         0.02 ether, 
+    //                         0.05 ether, 
+    //                         0.1 ether, 
+    //                         0.2 ether, 
+    //                         0.5 ether, 
+    //                         1 ether, 
+    //                         2 ether, 
+    //                         5 ether];      // 10th level
+    //     levelComissions = [10, 7, 5, 2, 1, 1, 1, 1, 1, 1];      // .../10 - get number in %
     }
 
     receive() external payable {}
