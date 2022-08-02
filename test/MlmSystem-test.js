@@ -2,17 +2,37 @@ const { ethers, network, deployments } = require("hardhat")
 const { expect, assert, use } = require("chai")
 const { Contract, signer, utils } = require("ethers")
 const { exp } = require("prelude-ls")
+const { deployMockContract } = require("@ethereum-waffle/mock-contract");
 
+require("../artifacts/contracts/MlmToken.sol/MlmToken.json")
 require("@nomiclabs/hardhat-waffle")
 
 describe("MlmSystem", function() {
 
-    let user1, user2, user3, user4, user5, user2_2, user2_3, mlmSystem, levelComissions
+    let owner, user1, user2, user3, user4, user5, user2_2, user2_3, mlmSystem, levelComissions
 
     beforeEach(async function () {
         [owner, user1, user2, user3, user4, user5, user2_2, user2_3] = await ethers.getSigners()
+        const MlmToken = await ethers.getContractFactory("MlmToken")
+        const mockContract = await deployMockContract(user1, MlmToken.abi)
         const mlmSystemFactory = await ethers.getContractFactory("MlmSystem")
-        mlmSystem = await upgrades.deployProxy(mlmSystemFactory, [])
+        mlmSystem = await upgrades.deployProxy(mlmSystemFactory, [
+            ethers.utils.parseEther("0.005"), 
+            [ethers.utils.parseEther("0.005"), 
+             ethers.utils.parseEther("0.01"), 
+             ethers.utils.parseEther("0.02"), 
+             ethers.utils.parseEther("0.05"), 
+             ethers.utils.parseEther("0.1"), 
+             ethers.utils.parseEther("0.2"), 
+             ethers.utils.parseEther("0.5"), 
+             ethers.utils.parseEther("1"), 
+             ethers.utils.parseEther("2"), 
+             ethers.utils.parseEther("5")], 
+            [10, 7, 5, 2, 1, 1, 1, 1, 1, 1],
+            mlmToken.address
+            //mockContract.address
+          ],
+          {initializer: "initialize"})
         await mlmSystem.deployed()
         console.log("Contract address:", mlmSystem.address)
 
@@ -22,7 +42,6 @@ describe("MlmSystem", function() {
         await mlmSystem.connect(user2).logIn(user1.address)
         await mlmSystem.connect(user2_2).logIn(user1.address)
         await mlmSystem.connect(user2_3).logIn(user1.address)
-
         await mlmSystem.connect(user3).logIn(user2.address)
         await mlmSystem.connect(user4).logIn(user3.address)
         await mlmSystem.connect(user5).logIn(user4.address)
