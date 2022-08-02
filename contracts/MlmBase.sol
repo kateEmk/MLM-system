@@ -4,7 +4,7 @@ pragma solidity ^0.8.12;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "./MlmToken.sol";
 
-contract MlmSystem {
+contract MlmSystem is Initializable {
 
     MlmToken tokenMLM;
 
@@ -16,25 +16,11 @@ contract MlmSystem {
     mapping (address => address[]) public partnersUsers;       // address of directPartner -> users who entered with his referalLink //referals
     mapping (address => address) public referalOfTheUser;      // user - referal (who invited user) 
 
-    function initialize(uint64 _MINIMUM_ENTER, uint64[10] memory _levelInvestments, uint8[10] memory _levelComissions) external initializer {
+    function initialize(uint64 _MINIMUM_ENTER, uint64[10] memory _levelInvestments, uint8[10] memory _levelComissions, address tokenAddress) external initializer {
         MINIMUM_ENTER = _MINIMUM_ENTER;
         levelInvestments = _levelInvestments;
         levelComissions = _levelComissions; 
         tokenMLM = MlmToken(tokenAddress);
-    // constructor(address tokenAddress) {
-    //     tokenMLM = MlmToken(tokenAddress);
-    //     MINIMUM_ENTER = 0.005 ether;
-    //     levelInvestments = [0.005 ether,    // 1st level
-    //                         0.01 ether, 
-    //                         0.02 ether, 
-    //                         0.05 ether, 
-    //                         0.1 ether, 
-    //                         0.2 ether, 
-    //                         0.5 ether, 
-    //                         1 ether, 
-    //                         2 ether, 
-    //                         5 ether];      // 10th level
-    //     levelComissions = [10, 7, 5, 2, 1, 1, 1, 1, 1, 1];      // .../10 - get number in %
     }
 
     receive() external payable {}

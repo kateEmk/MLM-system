@@ -12,9 +12,9 @@
     }
   ],
   "impls": {
-    "cba5f821a1af2db81fdc52771ee1cf8c87546543afe45e0101f6123b181941f1": {
+    "8c4730eedb071d4470a92a8d7df806c2696e50119918ed8f8331acf9e7beacd8": {
       "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      "txHash": "0x90a8b599ca06979b21ebe651830cdee2b9c4d4daf6761510dd81f9a9e7c9bc8d",
+      "txHash": "0x6d7ddca245989a0ea2b121282c59b4504ce9fb7941de04e2288ba53d0cec30d4",
       "layout": {
         "storage": [
           {
@@ -35,52 +35,60 @@
             "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
           },
           {
-            "label": "levelComissions",
-            "offset": 0,
-            "slot": "1",
-            "type": "t_array(t_uint8)10_storage",
-            "contract": "MlmSystem",
-            "src": "contracts/MlmBase.sol:8"
-          },
-          {
-            "label": "MINIMUM_ENTER",
-            "offset": 0,
-            "slot": "2",
-            "type": "t_uint64",
-            "contract": "MlmSystem",
-            "src": "contracts/MlmBase.sol:9"
-          },
-          {
-            "label": "levelInvestments",
-            "offset": 0,
-            "slot": "3",
-            "type": "t_array(t_uint64)10_storage",
-            "contract": "MlmSystem",
-            "src": "contracts/MlmBase.sol:10"
-          },
-          {
-            "label": "accountBalance",
-            "offset": 0,
-            "slot": "6",
-            "type": "t_mapping(t_address,t_uint256)",
-            "contract": "MlmSystem",
-            "src": "contracts/MlmBase.sol:12"
-          },
-          {
-            "label": "partnersUsers",
-            "offset": 0,
-            "slot": "7",
-            "type": "t_mapping(t_address,t_array(t_address)dyn_storage)",
+            "label": "tokenMLM",
+            "offset": 2,
+            "slot": "0",
+            "type": "t_contract(MlmToken)1966",
             "contract": "MlmSystem",
             "src": "contracts/MlmBase.sol:13"
           },
           {
+            "label": "MINIMUM_ENTER",
+            "offset": 22,
+            "slot": "0",
+            "type": "t_uint64",
+            "contract": "MlmSystem",
+            "src": "contracts/MlmBase.sol:15"
+          },
+          {
+            "label": "levelInvestments",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)10_storage",
+            "contract": "MlmSystem",
+            "src": "contracts/MlmBase.sol:16"
+          },
+          {
+            "label": "levelComissions",
+            "offset": 0,
+            "slot": "11",
+            "type": "t_array(t_uint256)10_storage",
+            "contract": "MlmSystem",
+            "src": "contracts/MlmBase.sol:17"
+          },
+          {
+            "label": "accountBalance",
+            "offset": 0,
+            "slot": "21",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "MlmSystem",
+            "src": "contracts/MlmBase.sol:19"
+          },
+          {
+            "label": "partnersUsers",
+            "offset": 0,
+            "slot": "22",
+            "type": "t_mapping(t_address,t_array(t_address)dyn_storage)",
+            "contract": "MlmSystem",
+            "src": "contracts/MlmBase.sol:20"
+          },
+          {
             "label": "referalOfTheUser",
             "offset": 0,
-            "slot": "8",
+            "slot": "23",
             "type": "t_mapping(t_address,t_address)",
             "contract": "MlmSystem",
-            "src": "contracts/MlmBase.sol:14"
+            "src": "contracts/MlmBase.sol:21"
           }
         ],
         "types": {
@@ -92,17 +100,17 @@
             "label": "address[]",
             "numberOfBytes": "32"
           },
-          "t_array(t_uint64)10_storage": {
-            "label": "uint64[10]",
-            "numberOfBytes": "96"
-          },
-          "t_array(t_uint8)10_storage": {
-            "label": "uint8[10]",
-            "numberOfBytes": "32"
+          "t_array(t_uint256)10_storage": {
+            "label": "uint256[10]",
+            "numberOfBytes": "320"
           },
           "t_bool": {
             "label": "bool",
             "numberOfBytes": "1"
+          },
+          "t_contract(MlmToken)1966": {
+            "label": "contract MlmToken",
+            "numberOfBytes": "20"
           },
           "t_mapping(t_address,t_address)": {
             "label": "mapping(address => address)",
