@@ -1,20 +1,80 @@
 {
   "manifestVersion": "3.2",
   "admin": {
-    "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-    "txHash": "0x3c757d4252006db9e71cb89e1231d9aac09dc2aa7c4682b734807e28ae0b9518"
+    "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+    "txHash": "0x2dc8ca6cccd1795762b63927fadc498d60d1c6bda50fb44e9ade876f1009f222"
   },
   "proxies": [
     {
       "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
       "txHash": "0x8063f6fb2c6e7dc2bf1fb4eeab3252a8875878851109ae87dbbe9919c72bfb28",
       "kind": "transparent"
+    },
+    {
+      "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
+      "txHash": "0x43e10e9d0053ccb6715869e5073f4efe8a8d49536bf23dbee0b5b603c82aeb21",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0",
+      "txHash": "0xcf0afc5f6eba89b5ce8adb0736c7a729af28ced43016257dacc40bb19887f0cd",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e",
+      "txHash": "0xba493c814779472a34cb2cf0dd974c4513cac8862b1b27ef590bbc65de5e5baf",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x0B306BF915C4d645ff596e518fAf3F9669b97016",
+      "txHash": "0x5a84c077b2b00783b4798d55903503add0537b095ff1e8b645eaa74a68464ff7",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x9A676e781A523b5d0C0e43731313A708CB607508",
+      "txHash": "0x2a9c4bd8ded4bae748128b9d1b1a5935e97a6e678f1cb88affc3950e2fec9591",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE",
+      "txHash": "0x626ed6aa507c75a120e0752002fe4f07a18185fca68637509fe00e7856921a43",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+      "txHash": "0xa1208578f3cc93a62344e8d6743ed22a78f15312e62500b5acffa92eb02ecdd1",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+      "txHash": "0x133af2de244ddbea80dd3ccbdb5bbc174e821ac3d28487f722125bbcf836fdd8",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+      "txHash": "0x58c35e94d352ddc8f23ab5becb2a3d057b235ccc317671e1cfae4970e869ca02",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
+      "txHash": "0x9137f914fa4385d6dc927badaeee673cb2b738681384553a09ab88419dbab9e0",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82",
+      "txHash": "0x7e5c278a002f1e5827201f1340da31a76cca0e30243a9ef772d8431b7535e58b",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1",
+      "txHash": "0x8b0ae611baf3afae47a32776b751fc4ef18b1472bc7c88f5fbf18a7ae7dabd7c",
+      "kind": "transparent"
     }
   ],
   "impls": {
     "7c97ef858c98a1f248868753167102925a8a5da07462f131dcda8138adf9c169": {
-      "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      "txHash": "0xa86991b238f49aa482f0898c97d2cbc73cab5635589986dcd52330f923e42c61",
+      "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      "txHash": "0x05efb67681b607dc0ac74fefc36c4bc89d4477917a36a843eabe2a45a40e5e25",
       "layout": {
         "storage": [
           {
@@ -40,7 +100,7 @@
             "slot": "0",
             "type": "t_address",
             "contract": "MlmSystem",
-            "src": "contracts/MlmBase.sol:10"
+            "src": "contracts/MlmSystem.sol:9"
           },
           {
             "label": "MINIMUM_ENTER",
@@ -48,7 +108,7 @@
             "slot": "0",
             "type": "t_uint64",
             "contract": "MlmSystem",
-            "src": "contracts/MlmBase.sol:12"
+            "src": "contracts/MlmSystem.sol:11"
           },
           {
             "label": "levelInvestments",
@@ -56,7 +116,7 @@
             "slot": "1",
             "type": "t_array(t_uint256)10_storage",
             "contract": "MlmSystem",
-            "src": "contracts/MlmBase.sol:13"
+            "src": "contracts/MlmSystem.sol:12"
           },
           {
             "label": "levelComissions",
@@ -64,7 +124,7 @@
             "slot": "11",
             "type": "t_array(t_uint256)10_storage",
             "contract": "MlmSystem",
-            "src": "contracts/MlmBase.sol:14"
+            "src": "contracts/MlmSystem.sol:13"
           },
           {
             "label": "accountBalance",
@@ -72,7 +132,7 @@
             "slot": "21",
             "type": "t_mapping(t_address,t_uint256)",
             "contract": "MlmSystem",
-            "src": "contracts/MlmBase.sol:16"
+            "src": "contracts/MlmSystem.sol:15"
           },
           {
             "label": "partnersUsers",
@@ -80,7 +140,7 @@
             "slot": "22",
             "type": "t_mapping(t_address,t_array(t_address)dyn_storage)",
             "contract": "MlmSystem",
-            "src": "contracts/MlmBase.sol:17"
+            "src": "contracts/MlmSystem.sol:16"
           },
           {
             "label": "referalOfTheUser",
@@ -88,7 +148,7 @@
             "slot": "23",
             "type": "t_mapping(t_address,t_address)",
             "contract": "MlmSystem",
-            "src": "contracts/MlmBase.sol:18"
+            "src": "contracts/MlmSystem.sol:17"
           }
         ],
         "types": {

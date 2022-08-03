@@ -6,7 +6,6 @@ import "./MlmToken.sol";
 
 contract MlmSystem is Initializable {
 
-    // MlmToken tokenMLM;
     address mlmToken;
 
     uint64 public MINIMUM_ENTER;               // minimum amount to log in into system
