@@ -1,0 +1,135 @@
+{
+  "manifestVersion": "3.2",
+  "admin": {
+    "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+    "txHash": "0x3c757d4252006db9e71cb89e1231d9aac09dc2aa7c4682b734807e28ae0b9518"
+  },
+  "proxies": [
+    {
+      "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+      "txHash": "0xd1e5e12ec56319873d077c928b56e133aa444c28c33fa2b0138faedd3c720d26",
+      "kind": "transparent"
+    }
+  ],
+  "impls": {
+    "6d77bb7476fb69a58d063ca92c421f4a702e7a3cc22a779f4843b98bff6014d2": {
+      "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      "txHash": "0x1e0823dc8ea3c1e29444750e74eb3caa5c5541dfc569843df617c7f1ebaf3191",
+      "layout": {
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "levelComissions",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint8)10_storage",
+            "contract": "MlmSystem",
+            "src": "contracts/MlmBase.sol:8"
+          },
+          {
+            "label": "MINIMUM_ENTER",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint64",
+            "contract": "MlmSystem",
+            "src": "contracts/MlmBase.sol:9"
+          },
+          {
+            "label": "levelInvestments",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_array(t_uint64)10_storage",
+            "contract": "MlmSystem",
+            "src": "contracts/MlmBase.sol:10"
+          },
+          {
+            "label": "accountBalance",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "MlmSystem",
+            "src": "contracts/MlmBase.sol:12"
+          },
+          {
+            "label": "partnersUsers",
+            "offset": 0,
+            "slot": "7",
+            "type": "t_mapping(t_address,t_array(t_address)dyn_storage)",
+            "contract": "MlmSystem",
+            "src": "contracts/MlmBase.sol:13"
+          },
+          {
+            "label": "referalOfTheUser",
+            "offset": 0,
+            "slot": "8",
+            "type": "t_mapping(t_address,t_address)",
+            "contract": "MlmSystem",
+            "src": "contracts/MlmBase.sol:14"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint64)10_storage": {
+            "label": "uint64[10]",
+            "numberOfBytes": "96"
+          },
+          "t_array(t_uint8)10_storage": {
+            "label": "uint8[10]",
+            "numberOfBytes": "32"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_address)": {
+            "label": "mapping(address => address)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_array(t_address)dyn_storage)": {
+            "label": "mapping(address => address[])",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    }
+  }
+}

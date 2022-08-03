@@ -9,10 +9,10 @@ describe("MlmSystem", function() {
 
     let user1, user2, user3, user4, user5, user2_2, user2_3, mlmSystem, levelComissions
 
-    before(async function () {
+    beforeEach(async function () {
         [owner, user1, user2, user3, user4, user5, user2_2, user2_3] = await ethers.getSigners()
         const mlmSystemFactory = await ethers.getContractFactory("MlmSystem")
-        mlmSystem = await mlmSystemFactory.deploy()
+        mlmSystem = await upgrades.deployProxy(mlmSystemFactory, [])
         await mlmSystem.deployed()
         console.log("Contract address:", mlmSystem.address)
 
