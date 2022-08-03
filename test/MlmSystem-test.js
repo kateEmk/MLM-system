@@ -1,10 +1,8 @@
 const { ethers, network, deployments } = require("hardhat")
 const { expect, assert, use } = require("chai")
 const { Contract, signer, utils } = require("ethers")
-//const { exp } = require("prelude-ls")
 const {abi, bytecode} = require('compile');
 const { deployMockContract } = require("@ethereum-waffle/mock-contract");
-//const { MockProvider, deployContract } = require("ethereum-waffle");
 
 require("hardhat-etherscan-abi")
 require("../artifacts/contracts/MlmSystem.sol/MlmSystem.json")
@@ -87,15 +85,12 @@ describe("MlmSystem", function() {
         let accBalance = await ethers.provider.getBalance(mlmSystem.address)
 
         expect(accBalance).to.equal(ethers.utils.parseEther(amount.toString()))                                    
-        //expect(ethers.utils.parseEther(accBalanceContract)).to.equal(ethers.utils.parseEther(comission.toString()))
+
         console.log("transaction => successfull")
         console.log("Balance after sending transaction:", accBalance.toString())
     })
 
     it("It should allow owner to withdraw funds and send comission to referals", async function() {
-        // const comission1 = 0.1 * 5 / 100;
-        // const comission2 = 0.2 * 5 / 100;
-
         await mockContract.mock
             .transfer
             .withArgs(user1.address, ethers.utils.parseEther("0.1"))
@@ -125,7 +120,7 @@ describe("MlmSystem", function() {
         console.log("Level of user3 (0.2 ether):", level3.toString())
 
         // user2 - level 2 (comission - 8; 0.1), user3 - level 3 (comission - 7; 0.1)
-        //expect(() => txWithdraw).to.changeEtherBalances([user2, user3], [balance11 * levelComissions[level2] / 10, balance1 * levelComissions[level3] / 10])
+        expect(() => txWithdraw).to.changeEtherBalances([user2, user3], [balance11 * levelComissions[level2] / 10, balance1 * levelComissions[level3] / 10])
     })
 
     it("The level of investments higher than 10", async function() {
