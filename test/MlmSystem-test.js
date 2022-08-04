@@ -1,18 +1,37 @@
 const { ethers, network, deployments } = require("hardhat")
 const { expect, assert, use } = require("chai")
 const { Contract, signer, utils } = require("ethers")
-const { exp } = require("prelude-ls")
+const { deployMockContract } = require("@ethereum-waffle/mock-contract");
 
+require("../artifacts/contracts/MlmSystem.sol/MlmSystem.json")
+const MlmToken = require("../artifacts/contracts/MlmToken.sol/MlmToken.json")
 require("@nomiclabs/hardhat-waffle")
 
 describe("MlmSystem", function() {
 
-    let user1, user2, user3, user4, user5, user2_2, user2_3, mlmSystem, levelComissions
+    let owner, user1, user2, user3, user4, user5, user2_2, user2_3, mlmSystem, levelComissions, mockContract
 
     beforeEach(async function () {
         [owner, user1, user2, user3, user4, user5, user2_2, user2_3] = await ethers.getSigners()
+
+        mockContract = await deployMockContract(owner, MlmToken.abi)
         const mlmSystemFactory = await ethers.getContractFactory("MlmSystem")
-        mlmSystem = await upgrades.deployProxy(mlmSystemFactory, [])
+        mlmSystem = await upgrades.deployProxy(mlmSystemFactory, [
+            ethers.utils.parseEther("0.005"), 
+            [ethers.utils.parseEther("0.005"), 
+             ethers.utils.parseEther("0.01"), 
+             ethers.utils.parseEther("0.02"), 
+             ethers.utils.parseEther("0.05"), 
+             ethers.utils.parseEther("0.1"), 
+             ethers.utils.parseEther("0.2"), 
+             ethers.utils.parseEther("0.5"), 
+             ethers.utils.parseEther("1"), 
+             ethers.utils.parseEther("2"), 
+             ethers.utils.parseEther("5")], 
+            [10, 7, 5, 2, 1, 1, 1, 1, 1, 1],
+            mockContract.address
+          ],
+          {initializer: "initialize"})
         await mlmSystem.deployed()
         console.log("Contract address:", mlmSystem.address)
 
@@ -22,7 +41,6 @@ describe("MlmSystem", function() {
         await mlmSystem.connect(user2).logIn(user1.address)
         await mlmSystem.connect(user2_2).logIn(user1.address)
         await mlmSystem.connect(user2_3).logIn(user1.address)
-
         await mlmSystem.connect(user3).logIn(user2.address)
         await mlmSystem.connect(user4).logIn(user3.address)
         await mlmSystem.connect(user5).logIn(user4.address)
@@ -35,59 +53,84 @@ describe("MlmSystem", function() {
             if (a[i] !== b[i]) return false; // Ес­ли хоть один эле­мент от­ли­ча­ет­ся, мас­си­вы не рав­ны
       
         return true; // Ина­че они рав­ны
-      }
+    }
 
-    it("User has 0 ether by default", async function() {
+    it("User has 0 tokens by default", async function() {
         const accBalance = await ethers.provider.getBalance(mlmSystem.address)
-        console.log("Starting balance:", accBalance.toString())
-        expect(accBalance).to.eq(0)
+        console.log("Starting b(alance:", accBalance.toString())
+        expect(accBalance).to.equal(0)
     })
 
     it("Should check minimal invest", async function() {
         const amount = 0.006
-        expect(amount>=0.005).to.eq(true)
+        expect(amount >= 0.005).to.eq(true)
         console.log("Does minimal amount '>=' 0.005? ->", amount>=0.005)
     })
 
     it("Should check that transaction (investing) went through", async function() {
         const amount = 1;
-        const tx = await mlmSystem.connect(user1).invest({value: ethers.utils.parseEther(amount.toString())})
+        const comission = amount * 5 / 100;
+
+        await mockContract.mock
+            .transfer
+            .withArgs(mlmSystem.address, ethers.utils.parseEther(comission.toString()))
+            .returns(true)
+        
+        await mlmSystem
+            .connect(user1)
+            .invest({value: ethers.utils.parseEther(amount.toString())})
+
         let accBalance = await ethers.provider.getBalance(mlmSystem.address)
-        await tx.wait()
-        expect(accBalance).to.equal(ethers.utils.parseEther(amount.toString()))
+
+        expect(accBalance).to.equal(ethers.utils.parseEther(amount.toString()))                                    
+
         console.log("transaction => successfull")
         console.log("Balance after sending transaction:", accBalance.toString())
     })
 
     it("It should allow owner to withdraw funds and send comission to referals", async function() {
-        const sendMoney2 = await mlmSystem.connect(user2).invest({value: ethers.utils.parseEther("0.1")}) 
-        await sendMoney2.wait()
-        const sendMoney3 = await mlmSystem.connect(user3).invest({value: ethers.utils.parseEther("0.2")}) 
-        await sendMoney3.wait()
+        await mockContract.mock
+            .transfer
+            .withArgs(user1.address, ethers.utils.parseEther("0.1"))
+            .returns(true)
+        
+        await mlmSystem
+            .connect(user1)
+            .invest({value: ethers.utils.parseEther("0.1")})
+
+        await mockContract.mock
+            .transfer
+            .withArgs(user2.address, ethers.utils.parseEther("0.2"))
+            .returns(true)
+        
+        await mlmSystem
+            .connect(user2)
+            .invest({value: ethers.utils.parseEther("0.2")})
 
         let balance1 = await ethers.provider.getBalance(user1.address)
       
-        const txWithdraw = await mlmSystem.connect(user1).withdraw()
+        const txWithdraw = await mlmSystem.connect(mlmSystem.address).withdraw()
+
         let level2 = await mlmSystem.getLevel(user2.address)
         let level3 = await mlmSystem.getLevel(user3.address)
+
         console.log("Level of user2 (0.1 ether):", level2.toString())
         console.log("Level of user3 (0.2 ether):", level3.toString())
 
         // user2 - level 2 (comission - 8; 0.1), user3 - level 3 (comission - 7; 0.1)
-        expect(()=>txWithdraw).to.changeEtherBalances([user2, user3], [balance1 * levelComissions[level2] / 10, balance1 * levelComissions[level3] / 10])
-    })
-
-    it("It gets the level of the user", async function() {
-        const sendMoney = await mlmSystem.connect(user4).invest({value: ethers.utils.parseEther("1")}) 
-        await sendMoney.wait()
-
-        const tx = await mlmSystem.getLevel(user4.address)
-        
-        console.log("Level with 1 ether => ", tx.toString())
-        expect(tx).to.eq(8)
+        expect(() => txWithdraw).to.changeEtherBalances([user2, user3], [balance11 * levelComissions[level2] / 10, balance1 * levelComissions[level3] / 10])
     })
 
     it("The level of investments higher than 10", async function() {
+        await mockContract.mock
+            .transfer
+            .withArgs(mlmSystem.address, ethers.utils.parseEther((100 * 5 / 100).toString()))
+            .returns(true)
+
+        await mlmSystem
+            .connect(user4)
+            .invest({value: ethers.utils.parseEther("100")})
+
         const sendMoney = await mlmSystem.connect(user4).invest({value: ethers.utils.parseEther("100")}) 
         await sendMoney.wait()
 

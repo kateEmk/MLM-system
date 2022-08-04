@@ -2,9 +2,11 @@
 pragma solidity ^0.8.12;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "./MlmToken.sol";
 
 contract MlmSystem is Initializable {
 
+    address mlmToken;
     uint8[10] public levelComissions;        // array of comissions according to the level of the user
     uint64 public MINIMUM_ENTER;               // minimum amount to log in into system
     uint64[10] public levelInvestments;       // array with levels of investments according to the amount of ether
@@ -13,10 +15,11 @@ contract MlmSystem is Initializable {
     mapping (address => address[]) public partnersUsers;       // address of directPartner -> users who entered with his referalLink //referals
     mapping (address => address) public referalOfTheUser;      // user - referal (who invited user) 
 
-    function initialize(uint64 _MINIMUM_ENTER, uint64[10] memory _levelInvestments, uint8[10] memory _levelComissions) external initializer {
+    function initialize(uint64 _MINIMUM_ENTER, uint64[10] memory _levelInvestments, uint8[10] memory _levelComissions, address tokenAddress) external initializer {
         MINIMUM_ENTER = _MINIMUM_ENTER;
         levelInvestments = _levelInvestments;
         levelComissions = _levelComissions; 
+        mlmToken = tokenAddress;
     }
 
     receive() external payable {}
@@ -28,12 +31,13 @@ contract MlmSystem is Initializable {
         require(msg.value >= MINIMUM_ENTER, "Didn't send enough");
         uint256 _comissionToContract = msg.value * 5 / 100;             // calculate the amount that should be invested to contract (5%)
 
+        MlmToken(mlmToken).transfer(address(this), _comissionToContract);            // transfer tokens to the address
         accountBalance[msg.sender] += msg.value - _comissionToContract;                     // change balance afther investing
     }
 
     /** @notice Function to withdraw funds from the account and send comissions according to the depth of referals
         @return Boolean value that withdraw function was executed correctly
-    */
+     */
     function withdraw() external returns(bool) {
         uint _userBalance = accountBalance[msg.sender];
         require(_userBalance > 0, "Your current balance is 0");
@@ -43,22 +47,19 @@ contract MlmSystem is Initializable {
         uint _counterDepth = 0;
         uint _comission = 0;
     
-        for (uint i = 0; i<10; i++) {              // calculate the depth of the referals
+        for (uint i = 0; i < 10; i++) {              // calculate the depth of the referals
             while(_current != address(0)) {
                 _counterDepth++;
                 _current = referalOfTheUser[msg.sender];
                 _comission = _userBalance * levelComissions[getLevel(_current)] / getPercentage;    // value / 10 (to get value of comission)
-                (bool success, ) = payable(_current).call{value: _comission}("");
-                require(success, "Transfer failed");
+                MlmToken(mlmToken).transferFrom(msg.sender, payable(_current), _comission);
                 _userBalance -= _comission;
             }
         }
 
         accountBalance[msg.sender] = 0;
 
-        (bool successUser, ) = payable(msg.sender).call{value: _userBalance}(""); 
-        require(successUser, "Transfer failed");
-
+        MlmToken(mlmToken).transfer(address(this), _userBalance);
         return true;
     }
 
