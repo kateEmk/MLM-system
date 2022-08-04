@@ -1,7 +1,6 @@
 const { ethers, network, deployments } = require("hardhat")
 const { expect, assert, use } = require("chai")
 const { Contract, signer, utils } = require("ethers")
-const {abi, bytecode} = require('compile');
 const { deployMockContract } = require("@ethereum-waffle/mock-contract");
 
 require("../artifacts/contracts/MlmSystem.sol/MlmSystem.json")
