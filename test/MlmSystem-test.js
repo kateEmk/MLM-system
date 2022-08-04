@@ -4,7 +4,6 @@ const { Contract, signer, utils } = require("ethers")
 const {abi, bytecode} = require('compile');
 const { deployMockContract } = require("@ethereum-waffle/mock-contract");
 
-require("hardhat-etherscan-abi")
 require("../artifacts/contracts/MlmSystem.sol/MlmSystem.json")
 const MlmToken = require("../artifacts/contracts/MlmToken.sol/MlmToken.json")
 require("@nomiclabs/hardhat-waffle")
