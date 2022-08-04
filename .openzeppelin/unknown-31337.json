@@ -1,14 +1,20 @@
 {
   "manifestVersion": "3.2",
   "admin": {
+<<<<<<< HEAD
     "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
     "txHash": "0x2dc8ca6cccd1795762b63927fadc498d60d1c6bda50fb44e9ade876f1009f222"
+=======
+    "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+    "txHash": "0x3c757d4252006db9e71cb89e1231d9aac09dc2aa7c4682b734807e28ae0b9518"
+>>>>>>> 92f178adbbf4f949c4c80291cf8a2aa4e5929931
   },
   "proxies": [
     {
       "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
       "txHash": "0x8063f6fb2c6e7dc2bf1fb4eeab3252a8875878851109ae87dbbe9919c72bfb28",
       "kind": "transparent"
+<<<<<<< HEAD
     },
     {
       "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
@@ -75,6 +81,14 @@
     "7c97ef858c98a1f248868753167102925a8a5da07462f131dcda8138adf9c169": {
       "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
       "txHash": "0x05efb67681b607dc0ac74fefc36c4bc89d4477917a36a843eabe2a45a40e5e25",
+=======
+    }
+  ],
+  "impls": {
+    "cba5f821a1af2db81fdc52771ee1cf8c87546543afe45e0101f6123b181941f1": {
+      "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      "txHash": "0x90a8b599ca06979b21ebe651830cdee2b9c4d4daf6761510dd81f9a9e7c9bc8d",
+>>>>>>> 92f178adbbf4f949c4c80291cf8a2aa4e5929931
       "layout": {
         "storage": [
           {
@@ -95,6 +109,7 @@
             "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
           },
           {
+<<<<<<< HEAD
             "label": "mlmToken",
             "offset": 2,
             "slot": "0",
@@ -109,10 +124,27 @@
             "type": "t_uint64",
             "contract": "MlmSystem",
             "src": "contracts/MlmSystem.sol:11"
+=======
+            "label": "levelComissions",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint8)10_storage",
+            "contract": "MlmSystem",
+            "src": "contracts/MlmBase.sol:8"
+          },
+          {
+            "label": "MINIMUM_ENTER",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint64",
+            "contract": "MlmSystem",
+            "src": "contracts/MlmBase.sol:9"
+>>>>>>> 92f178adbbf4f949c4c80291cf8a2aa4e5929931
           },
           {
             "label": "levelInvestments",
             "offset": 0,
+<<<<<<< HEAD
             "slot": "1",
             "type": "t_array(t_uint256)10_storage",
             "contract": "MlmSystem",
@@ -125,30 +157,57 @@
             "type": "t_array(t_uint256)10_storage",
             "contract": "MlmSystem",
             "src": "contracts/MlmSystem.sol:13"
+=======
+            "slot": "3",
+            "type": "t_array(t_uint64)10_storage",
+            "contract": "MlmSystem",
+            "src": "contracts/MlmBase.sol:10"
+>>>>>>> 92f178adbbf4f949c4c80291cf8a2aa4e5929931
           },
           {
             "label": "accountBalance",
             "offset": 0,
+<<<<<<< HEAD
             "slot": "21",
             "type": "t_mapping(t_address,t_uint256)",
             "contract": "MlmSystem",
             "src": "contracts/MlmSystem.sol:15"
+=======
+            "slot": "6",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "MlmSystem",
+            "src": "contracts/MlmBase.sol:12"
+>>>>>>> 92f178adbbf4f949c4c80291cf8a2aa4e5929931
           },
           {
             "label": "partnersUsers",
             "offset": 0,
+<<<<<<< HEAD
             "slot": "22",
             "type": "t_mapping(t_address,t_array(t_address)dyn_storage)",
             "contract": "MlmSystem",
             "src": "contracts/MlmSystem.sol:16"
+=======
+            "slot": "7",
+            "type": "t_mapping(t_address,t_array(t_address)dyn_storage)",
+            "contract": "MlmSystem",
+            "src": "contracts/MlmBase.sol:13"
+>>>>>>> 92f178adbbf4f949c4c80291cf8a2aa4e5929931
           },
           {
             "label": "referalOfTheUser",
             "offset": 0,
+<<<<<<< HEAD
             "slot": "23",
             "type": "t_mapping(t_address,t_address)",
             "contract": "MlmSystem",
             "src": "contracts/MlmSystem.sol:17"
+=======
+            "slot": "8",
+            "type": "t_mapping(t_address,t_address)",
+            "contract": "MlmSystem",
+            "src": "contracts/MlmBase.sol:14"
+>>>>>>> 92f178adbbf4f949c4c80291cf8a2aa4e5929931
           }
         ],
         "types": {
@@ -160,9 +219,19 @@
             "label": "address[]",
             "numberOfBytes": "32"
           },
+<<<<<<< HEAD
           "t_array(t_uint256)10_storage": {
             "label": "uint256[10]",
             "numberOfBytes": "320"
+=======
+          "t_array(t_uint64)10_storage": {
+            "label": "uint64[10]",
+            "numberOfBytes": "96"
+          },
+          "t_array(t_uint8)10_storage": {
+            "label": "uint8[10]",
+            "numberOfBytes": "32"
+>>>>>>> 92f178adbbf4f949c4c80291cf8a2aa4e5929931
           },
           "t_bool": {
             "label": "bool",

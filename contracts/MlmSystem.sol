@@ -7,10 +7,9 @@ import "./MlmToken.sol";
 contract MlmSystem is Initializable {
 
     address mlmToken;
-
+    uint8[10] public levelComissions;        // array of comissions according to the level of the user
     uint64 public MINIMUM_ENTER;               // minimum amount to log in into system
-    uint256[10] public levelInvestments;       // array with levels of investments according to the amount of ether
-    uint256[10] public levelComissions;        // array of comissions according to the level of the user
+    uint64[10] public levelInvestments;       // array with levels of investments according to the amount of ether
 
     mapping (address => uint256) public accountBalance;        // user address - balance of his account
     mapping (address => address[]) public partnersUsers;       // address of directPartner -> users who entered with his referalLink //referals
