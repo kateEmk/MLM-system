@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 contract MlmToken is ERC20 {
 
     address public admin;
+    
     constructor() ERC20("MlmToken", "MLM") {
         _mint(msg.sender, 100000000 * (10 ** 18));
         admin = msg.sender;
