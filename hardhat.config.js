@@ -11,10 +11,13 @@ module.exports = {
   defaultNetwork: "hardhat",
   solidity: "0.8.12",
   networks: {
-    rinkeby: {
-        url: RINKEBY_RPC_URL,
-        accounts: [PRIVATE_KEY],
-        chainId: 4,
+    // rinkeby: {
+    //     url: RINKEBY_RPC_URL,
+    //     accounts: [PRIVATE_KEY],
+    //     chainId: 4,
+    // },
+    hardhat: {
+      chainId: 31337,
     },
   },
 };

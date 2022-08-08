@@ -27,12 +27,12 @@ contract MlmSystem is Initializable {
 
     /** @notice Function to invest funds to the account    
      */
-    function invest() external payable {
-        require(msg.value >= MINIMUM_ENTER, "Didn't send enough");
-        uint256 _comissionToContract = msg.value * 5 / 100;             // calculate the amount that should be invested to contract (5%)
+    function invest(uint256 _amount) external {
+        require(_amount >= MINIMUM_ENTER, "Didn't send enough");
+        uint256 _comissionToContract = _amount * 5 / 100;             // calculate the amount that should be invested to contract (5%)
 
-        MlmToken(mlmToken).transfer(address(this), _comissionToContract);            // transfer tokens to the address
-        accountBalance[msg.sender] += msg.value - _comissionToContract;                     // change balance afther investing
+        MlmToken(mlmToken).transferFrom(msg.sender, address(this), _amount);            // transfer tokens to the address
+        accountBalance[msg.sender] += _amount - _comissionToContract;                     // change balance afther investing
     }
 
     /** @notice Function to withdraw funds from the account and send comissions according to the depth of referals
@@ -52,6 +52,7 @@ contract MlmSystem is Initializable {
                 _counterDepth++;
                 _current = referalOfTheUser[msg.sender];
                 _comission = _userBalance * levelComissions[getLevel(_current)] / getPercentage;    // value / 10 (to get value of comission)
+                MlmToken(mlmToken).approve(msg.sender, _comission);
                 MlmToken(mlmToken).transferFrom(msg.sender, payable(_current), _comission);
                 _userBalance -= _comission;
             }
@@ -68,10 +69,10 @@ contract MlmSystem is Initializable {
     */
     function logIn(address _referalLink) external {             
         if(_referalLink != address(0)) {    
-            partnersUsers[_referalLink].push(msg.sender);       // add user to array of people who entered with referal link of the partner              
-        } else {
-            partnersUsers[msg.sender].push(address(0));         // create new direct partner (referal link = address of new user)
-        }
+            partnersUsers[_referalLink].push(msg.sender); }     // add user to array of people who entered with referal link of the partner              
+        // } else {
+        //     partnersUsers[msg.sender].push(address(0));         // create new direct partner (referal link = address of new user)
+        // }
     }
 
     /** @notice Function to see by address of the user amount of direct partners and their levels
