@@ -68,9 +68,17 @@ describe("MlmSystem", function() {
         console.log("Does minimal amount '>=' 0.005? ->", amount>=0.005)
     })
 
+    it("It will failed because user didn't send enough", async function() {
+        const amount = "0.004"
+        const tx = await mlmSystem
+            .connect(user1)
+            .invest(ethers.utils.parseEther(amount)) 
+        await expect(tx).to.be.revertedWith("Didn't send enough")
+    })
+
     it("Should check that transaction (investing) went through", async function() {
-        console.log(await ethers.provider.getBalance(user1.address))
         amount = 1
+
         await mockContract.mock
             .transferFrom
             .withArgs(user1.address, mlmSystem.address, ethers.utils.parseEther(amount.toString()))
@@ -79,16 +87,17 @@ describe("MlmSystem", function() {
         const tx = await mlmSystem
             .connect(user1)
             .invest(ethers.utils.parseEther(amount.toString()))
-
         await tx.wait()
-        let accBalance = await ethers.provider.getBalance(mlmSystem.address)
-        
+
+        let accBalance = await mlmSystem.connect(user1).getBalance()
         expect(accBalance)
-            .to.be.equal(ethers.utils.parseEther((amount).toString()))                  
+            .to.be.equal(ethers.utils.parseEther((amount - amount * 5 / 100).toString()))                  
         console.log("transaction => successfull")
     })
 
     it("It should allow owner to withdraw funds and send comission to referals", async function() {
+        let accBalanceUser1 = await mlmSystem.connect(user1).getBalance()
+
         await mockContract.mock
             .transferFrom
             .withArgs(user2.address, mlmSystem.address, ethers.utils.parseEther("0.1"))
@@ -107,18 +116,21 @@ describe("MlmSystem", function() {
             .connect(user3)
             .invest(ethers.utils.parseEther("0.2"))
 
-        console.log("Balance after investing:", await ethers.provider.getBalance(mlmSystem.address))
-        let accBalanceUser1 = await ethers.provider.getBalance(user1.address)
-        const txWithdraw = await mlmSystem.connect(user1).withdraw()
+        await mockContract.mock
+            .transfer
+            .withArgs(mlmSystem.address, accBalanceUser1)
         
-        // MlmToken(mlmToken).transfer(address(this), _userBalance);
+        const tx = await mlmSystem.connect(user1).withdraw()
+        
+        const newBalanceUser1 = await mlmSystem.connect(user1).getBalance();
+        expect(newBalanceUser1).to.equal(0);
 
-        // // user2 - level 2 (comission - 8; 0.1), user3 - level 3 (comission - 7; 0.1)
-        expect(() => txWithdraw)
+        // user2 - level 2 (comission - 8; 0.1), user3 - level 3 (comission - 7; 0.1)
+        expect(() => tx)
                     .to
                     .changeEtherBalances(
-                        [user1, user2, user3], 
-                        [-accBalanceUser1, balance11 * levelComissions[level2] / 10, balance1 * levelComissions[level3] / 10]
+                        [user2, user3], 
+                        [accBalanceUser1 * 1 / 10, accBalanceUser1 * 1 / 10]
                     )
     })
 
