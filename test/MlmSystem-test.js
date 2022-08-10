@@ -87,7 +87,7 @@ describe("MlmSystem", function() {
             .invest(ethers.utils.parseEther(amount.toString()))
         await tx.wait()
 
-        let accBalance = await mlmSystem.connect(user1).getBalance()
+        let accBalance = await ethers.provider.getBalance(user1.address)
         expect(accBalance)
             .to.be.equal(ethers.utils.parseEther((amount - amount * 5 / 100).toString()))                  
         console.log("transaction => successfull")
@@ -109,7 +109,7 @@ describe("MlmSystem", function() {
         await tx1.wait();
         await tx2.wait();
 
-        let accBalanceUser3 = await mlmSystem.connect(user3).getBalance()
+        let accBalanceUser3 = await ethers.provider.getBalance(user3.address)
 
         let accBalanceChanged = accBalanceUser3 - accBalanceUser3 * 1 / 10 - accBalanceUser3 * 7 / 100
         await mockContract.mock
@@ -120,7 +120,7 @@ describe("MlmSystem", function() {
         const tx = await mlmSystem.connect(user3).withdraw()
         tx.wait()
         
-        expect(await mlmSystem.connect(user3).getBalance()).to.equal(0);
+        expect(await ethers.provider.getBalance(user3.address)).to.equal(0);
         expect(() => tx)
                     .to
                     .changeEtherBalances(

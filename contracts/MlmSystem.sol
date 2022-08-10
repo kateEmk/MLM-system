@@ -70,9 +70,6 @@ contract MlmSystem is Initializable {
         if(_referalLink != address(0)) {    
             partnersUsers[_referalLink].push(msg.sender);   // add user to array of people who entered with referal link of the partner     
         }              
-        // } else {
-        //     partnersUsers[msg.sender].push(address(0));         // create new direct partner (referal link = address of new user)
-        // }
     }
 
     /** @notice Function to see by address of the user amount of direct partners and their levels
@@ -87,14 +84,6 @@ contract MlmSystem is Initializable {
             _partnersLevel[i] = getLevel(_partnersAddresses[i]);            // get level of every partner of the user
         }
         return(amountPartners, _partnersLevel);
-    }
-
-    /**
-     @notice Get the total amount of investment you have made. It returns both the locked and unloacked investment.
-     @return balance The balance you still have in the contract
-    */
-    function getBalance() external view returns (uint256 balance) {
-        return accountBalance[msg.sender];
     }
 
     /** @notice Function to get level of the user according to the amount of his investments
