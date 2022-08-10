@@ -19,11 +19,19 @@ contract MlmEIP712 is EIP712 {
    
     constructor() EIP712("MlmEIP712", "0.0.1") {}   
 
+    /** @notice Function to verify address according to the hash
+    *   @param req Struct object
+        @return Function returns true if address is correct
+    */
     function verify(Message calldata req) external view returns(bool) {
         bytes32 hash = _hashData(req);
         return (ECDSA.recover(hash, req.signature) == msg.sender);
     }
 
+    /** @notice Function to get hash
+    *   @param req Struct object
+        @return Function returns hash
+    */
     function _hashData(Message calldata req) private view returns(bytes32) {
         bytes32 hash = _hashTypedDataV4(keccak256(abi.encode(
             message_HASH,
