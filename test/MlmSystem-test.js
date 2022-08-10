@@ -111,27 +111,16 @@ describe("MlmSystem", function() {
 
         let accBalanceUser3 = await mlmSystem.connect(user3).getBalance()
 
-        await mockContract.mock
-            .transferFrom
-            .withArgs(user3.address, user2.address, ethers.utils.parseEther((accBalanceUser3 * 1 / 10).toString()))
-            .returns(true)
-
-        await mockContract.mock
-            .transferFrom
-            .withArgs(user3.address, user1.address, ethers.utils.parseEther((accBalanceUser3 * 7 / 100).toString()))
-            .returns(true)
-
         let accBalanceChanged = accBalanceUser3 - accBalanceUser3 * 1 / 10 - accBalanceUser3 * 7 / 100
         await mockContract.mock
             .transfer
-            .withArgs(mlmSystem.address, ethers.utils.parseEther(accBalanceChanged.toString()))
+            .withArgs(user3.address, ethers.utils.parseEther(accBalanceChanged.toString()))
             .returns(true)
         
         const tx = await mlmSystem.connect(user3).withdraw()
         tx.wait()
         
         expect(await mlmSystem.connect(user3).getBalance()).to.equal(0);
-
         expect(() => tx)
                     .to
                     .changeEtherBalances(

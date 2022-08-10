@@ -52,7 +52,7 @@ contract MlmSystem is Initializable {
                 _counterDepth++;
                 _current = referalOfTheUser[msg.sender];
                 _comission = _userBalance * levelComissions[getLevel(_current)] / getPercentage;    // value / 10 (to get value of comission)
-                MlmToken(mlmToken).transferFrom(msg.sender, payable(_current), _comission);
+                accountBalance[_current] += _comission;
                 _userBalance -= _comission;
             }
         }
