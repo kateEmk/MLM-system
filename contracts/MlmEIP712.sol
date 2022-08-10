@@ -27,11 +27,11 @@ contract MlmEIP712 is EIP712 {
     constructor() EIP712("MlmEIP712", "0.0.1") {}   
 
     function verify(Message calldata req) public returns(bool) {
-        bytes32 hash = checkHash(req);
+        bytes32 hash = hashData(req);
         return ECDSA.recover(hash, req.signature) == msg.sender;
     }
 
-    function checkHash(Message calldata req) public returns(bytes32) {
+    function hashData(Message calldata req) public returns(bytes32) {
         require(verify(req), "Signature does not match request");
         bytes32 hash = _hashTypedDataV4(keccak256(abi.encode(
             message_HASH,

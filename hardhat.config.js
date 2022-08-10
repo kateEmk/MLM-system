@@ -17,6 +17,7 @@ module.exports = {
     //     chainId: 4,
     // },
     hardhat: {
+      gasPrice: 20000000000,
       chainId: 31337,
     },
   },
