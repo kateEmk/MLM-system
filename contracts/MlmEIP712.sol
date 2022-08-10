@@ -15,32 +15,23 @@ contract MlmEIP712 is EIP712 {
         bytes signature;
     }
 
-    struct Domain {
-        string name;
-        string version;
-        uint256 chainId;
-        address verifyingContract;
-    }
-
-    bytes32 private constant message_HASH = keccak256("Message(string name, address from, uint256 value, uint256 salt, bytes signature)");
+    bytes32 private constant message_HASH = keccak256("Message(string name,address from,uint256 value,uint256 salt)");
    
     constructor() EIP712("MlmEIP712", "0.0.1") {}   
 
-    function verify(Message calldata req) public returns(bool) {
-        bytes32 hash = hashData(req);
-        return ECDSA.recover(hash, req.signature) == msg.sender;
+    function verify(Message calldata req) external view returns(bool) {
+        bytes32 hash = _hashData(req);
+        return (ECDSA.recover(hash, req.signature) == msg.sender);
     }
 
-    function hashData(Message calldata req) public returns(bytes32) {
-        require(verify(req), "Signature does not match request");
+    function _hashData(Message calldata req) private view returns(bytes32) {
         bytes32 hash = _hashTypedDataV4(keccak256(abi.encode(
             message_HASH,
-            req.name,
+            keccak256(bytes(req.name)),
             req.from,
             req.value,
             req.salt
         )));
         return hash;
     }
-
 }

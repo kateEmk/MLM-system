@@ -15,18 +15,15 @@ describe("MlmEIP712", function() {
     })
 
     it("EIP712", async function() {
-        const typedData = {
-            types: { Message: [
+        const types = { 
+            Message: [
                 { name: 'name', type: 'string' },
                 { name: 'from', type: 'address' },
                 { name: 'value', type: 'uint256' },
                 { name: 'salt', type: 'uint256'},
-                { name: 'signature', type: 'string' }
-                ]
-            }
-        }
-        const types = typedData.types;
-        const Domain = {
+            ]
+        };
+        const domain = {
             name: "MlmEIP712",
             version: "0.0.1",
             chainId: 31337,
@@ -40,7 +37,7 @@ describe("MlmEIP712", function() {
             signature: "",
         };
 
-        message.signature = await acc1._signTypedData(Domain, types, message)
+        message.signature = await acc1._signTypedData(domain, types, message)
         expect
             (await mlmEIP712.connect(acc1).verify(message))
             .to.be.equal(true);
