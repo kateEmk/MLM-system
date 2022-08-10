@@ -12,35 +12,37 @@ describe("MlmEIP712", function() {
         const mlmEIP712Factory = await ethers.getContractFactory("MlmEIP712")
         mlmEIP712 = await mlmEIP712Factory.deploy()
         await mlmEIP712.deployed()
-        console.log("Contract address: ", mlmEIP712.address)
     })
 
     it("EIP712", async function() {
+        const typedData = {
+            types: { Message: [
+                { name: 'name', type: 'string' },
+                { name: 'from', type: 'address' },
+                { name: 'value', type: 'uint256' },
+                { name: 'salt', type: 'uint256'},
+                { name: 'signature', type: 'string' }
+                ]
+            }
+        }
+        const types = typedData.types;
         const Domain = {
             name: "MlmEIP712",
             version: "0.0.1",
             chainId: 31337,
             verifyingContract: mlmEIP712.address,
         };
-        const types = {
-            Message: [
-                { name: 'from', type: 'address' },
-                { name: 'value', type: 'uint256' },
-                { name: 'salt', type: 'uint256'},
-                { name: 'name', type: 'string' }
-            ]
-        };
         const message = {
+            name: "MlmEIP712",
             from: acc1.address,
             value: 10,
             salt: 1337,
-            name: "MlmEIP712"
+            signature: "",
         };
 
-        const signature = await acc1._signTypedData(Domain, types, message)
+        message.signature = await acc1._signTypedData(Domain, types, message)
         expect
-            (await mlmEIP712.connect(acc1).verify(signature))
+            (await mlmEIP712.connect(acc1).verify(message))
             .to.be.equal(true);
-    })
-    
+    });
 })
