@@ -10,7 +10,7 @@ contract MlmEIP712 is EIP712 {
     struct Message {
         address from;           // Externally-owned account (EOA) making the request.
         uint256 value;
-        bytes32 salt;
+        uint256 salt;
         bytes signature;
     }
 
@@ -21,7 +21,7 @@ contract MlmEIP712 is EIP712 {
         address verifyingContract;
     }
 
-    bytes32 private constant message_HASH = keccak256("Message(address from, address to, uint256 value, bytes data, bytes32 salt)");
+    bytes32 private constant message_HASH = keccak256("Message(address from, uint256 value, uint256 salt, bytes signature)");
    
     constructor() EIP712("MlmEIP712", "0.0.1") {}   
 
@@ -30,7 +30,7 @@ contract MlmEIP712 is EIP712 {
         return ECDSA.recover(hash, req.signature) == msg.sender;
     }
 
-    function checkHash(Message calldata req) public returns( bytes32) {
+    function checkHash(Message calldata req) public returns(bytes32) {
         require(verify(req), "Signature does not match request");
         bytes32 hash = _hashTypedDataV4(keccak256(abi.encode(
             message_HASH,
@@ -42,11 +42,3 @@ contract MlmEIP712 is EIP712 {
     }
 
 }
-
-
-// const domain = {
-//     name: 'Ether Mail',
-//     version: '1',
-//     chainId: 1,
-//     verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC'
-// };
