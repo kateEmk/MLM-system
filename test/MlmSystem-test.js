@@ -94,8 +94,6 @@ describe("MlmSystem", function() {
     })
 
     it("It should allow owner to withdraw funds and send comission to referals", async function() {
-        let accBalanceUser1 = await mlmSystem.connect(user1).getBalance()
-
         await mockContract.mock
             .transferFrom
             .withArgs(user2.address, mlmSystem.address, ethers.utils.parseEther("0.1"))
@@ -110,38 +108,36 @@ describe("MlmSystem", function() {
         const tx2 = await mlmSystem.connect(user3).invest(ethers.utils.parseEther("0.2"));
         await tx1.wait();
         await tx2.wait();
-        
-        console.log(await mlmSystem.connect(user1).getBalance())
-        console.log(await mlmSystem.connect(user2).getBalance())
-        console.log(await mlmSystem.connect(user3).getBalance())
 
+        let accBalanceUser3 = await mlmSystem.connect(user3).getBalance()
 
         await mockContract.mock
             .transferFrom
-            .withArgs(user1.address, user2.address, ethers.utils.parseEther((accBalanceUser1 * 1 / 10).toString()))
+            .withArgs(user3.address, user2.address, ethers.utils.parseEther((accBalanceUser3 * 1 / 10).toString()))
+            .returns(true)
 
         await mockContract.mock
             .transferFrom
-            .withArgs(user1.address, user3.address, ethers.utils.parseEther((accBalanceUser1 * 1 / 10).toString()))
+            .withArgs(user3.address, user1.address, ethers.utils.parseEther((accBalanceUser3 * 7 / 100).toString()))
+            .returns(true)
 
-        let accBalanceChanged = await mlmSystem.connect(user1).getBalance()
+        let accBalanceChanged = accBalanceUser3 - accBalanceUser3 * 1 / 10 - accBalanceUser3 * 7 / 100
         await mockContract.mock
             .transfer
-            .withArgs(mlmSystem.address, accBalanceChanged)
+            .withArgs(mlmSystem.address, ethers.utils.parseEther(accBalanceChanged.toString()))
+            .returns(true)
         
-        const tx = await mlmSystem.connect(user1).withdraw()
+        const tx = await mlmSystem.connect(user3).withdraw()
         tx.wait()
         
-        const newBalanceUser1 = await mlmSystem.connect(user3).getBalance();
-        expect(newBalanceUser1).to.equal(0);
+        expect(await mlmSystem.connect(user3).getBalance()).to.equal(0);
 
-        // // user2 - level 2 (comission - 8; 0.1), user3 - level 3 (comission - 7; 0.1)
-        // expect(() => tx)
-        //             .to
-        //             .changeEtherBalances(
-        //                 [user2, user3], 
-        //                 [accBalanceUser1 * 1 / 10, accBalanceUser1 * 1 / 10]
-        //             )
+        expect(() => tx)
+                    .to
+                    .changeEtherBalances(
+                        [user2, user1], 
+                        [accBalanceUser3 * 1 / 10, accBalanceUser3 * 7 / 100]
+                    )
     })
 
     it("The level of investments equal '0'", async function() {
