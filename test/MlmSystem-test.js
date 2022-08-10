@@ -11,12 +11,13 @@ describe("MlmSystem", function() {
 
     let owner, user1, user2, user3, user4, user5, user2_2, user2_3, mlmSystem, levelComissions, mockContract
 
-    beforeEach(async function () {
+    before(async function () {
         [owner, user1, user2, user3, user4, user5, user2_2, user2_3] = await ethers.getSigners()
 
         mockContract = await deployMockContract(owner, MlmToken.abi)
         const mlmSystemFactory = await ethers.getContractFactory("MlmSystem")
-        mlmSystem = await upgrades.deployProxy(mlmSystemFactory, [
+        mlmSystem = await mlmSystemFactory.deploy()
+        mlmSystem.initialize(
             ethers.utils.parseEther("0.005"), 
             [ethers.utils.parseEther("0.005"), 
              ethers.utils.parseEther("0.01"), 
@@ -30,8 +31,7 @@ describe("MlmSystem", function() {
              ethers.utils.parseEther("5")], 
             [10, 7, 5, 2, 1, 1, 1, 1, 1, 1],
             mockContract.address
-          ],
-          {initializer: "initialize"})
+        )
         await mlmSystem.deployed()
         console.log("Contract address:", mlmSystem.address)
 
@@ -44,6 +44,7 @@ describe("MlmSystem", function() {
         await mlmSystem.connect(user3).logIn(user2.address)
         await mlmSystem.connect(user4).logIn(user3.address)
         await mlmSystem.connect(user5).logIn(user4.address)
+        
     })
 
     function equalArrays(a,b) {
@@ -67,91 +68,101 @@ describe("MlmSystem", function() {
         console.log("Does minimal amount '>=' 0.005? ->", amount>=0.005)
     })
 
-    it("Should check that transaction (investing) went through", async function() {
-        const amount = 1;
-        const comission = amount * 5 / 100;
+    it("It will failed because user didn't send enough", async function() {
+        await expect(mlmSystem
+                .connect(user1)
+                .invest(ethers.utils.parseEther("0.004")))
+                .to.be.revertedWith("Didn't send enough")
+    })
 
+    it("Should check that transaction (investing) went through", async function() {
+        amount = 1
         await mockContract.mock
-            .transfer
-            .withArgs(mlmSystem.address, ethers.utils.parseEther(comission.toString()))
+            .transferFrom
+            .withArgs(user1.address, mlmSystem.address, ethers.utils.parseEther(amount.toString()))
             .returns(true)
         
-        await mlmSystem
+        const tx = await mlmSystem
             .connect(user1)
-            .invest({value: ethers.utils.parseEther(amount.toString())})
+            .invest(ethers.utils.parseEther(amount.toString()))
+        await tx.wait()
 
-        let accBalance = await ethers.provider.getBalance(mlmSystem.address)
-
-        expect(accBalance).to.equal(ethers.utils.parseEther(amount.toString()))                                    
-
+        let accBalance = await ethers.provider.getBalance(user1.address)
+        expect(accBalance)
+            .to.be.equal(ethers.utils.parseEther((amount - amount * 5 / 100).toString()))                  
         console.log("transaction => successfull")
-        console.log("Balance after sending transaction:", accBalance.toString())
     })
 
     it("It should allow owner to withdraw funds and send comission to referals", async function() {
         await mockContract.mock
-            .transfer
-            .withArgs(user1.address, ethers.utils.parseEther("0.1"))
+            .transferFrom
+            .withArgs(user2.address, mlmSystem.address, ethers.utils.parseEther("0.1"))
             .returns(true)
-        
-        await mlmSystem
-            .connect(user1)
-            .invest({value: ethers.utils.parseEther("0.1")})
 
         await mockContract.mock
+            .transferFrom
+            .withArgs(user3.address, mlmSystem.address, ethers.utils.parseEther("0.2"))
+            .returns(true)
+
+        const tx1 = await mlmSystem.connect(user2).invest(ethers.utils.parseEther("0.1"));
+        const tx2 = await mlmSystem.connect(user3).invest(ethers.utils.parseEther("0.2"));
+        await tx1.wait();
+        await tx2.wait();
+
+        let accBalanceUser3 = await ethers.provider.getBalance(user3.address)
+
+        let accBalanceChanged = accBalanceUser3 - accBalanceUser3 * 1 / 10 - accBalanceUser3 * 7 / 100
+        await mockContract.mock
             .transfer
-            .withArgs(user2.address, ethers.utils.parseEther("0.2"))
+            .withArgs(user3.address, ethers.utils.parseEther(accBalanceChanged.toString()))
             .returns(true)
         
-        await mlmSystem
-            .connect(user2)
-            .invest({value: ethers.utils.parseEther("0.2")})
-
-        let balance1 = await ethers.provider.getBalance(user1.address)
-      
-        const txWithdraw = await mlmSystem.connect(mlmSystem.address).withdraw()
-
-        let level2 = await mlmSystem.getLevel(user2.address)
-        let level3 = await mlmSystem.getLevel(user3.address)
-
-        console.log("Level of user2 (0.1 ether):", level2.toString())
-        console.log("Level of user3 (0.2 ether):", level3.toString())
-
-        // user2 - level 2 (comission - 8; 0.1), user3 - level 3 (comission - 7; 0.1)
-        expect(() => txWithdraw).to.changeEtherBalances([user2, user3], [balance11 * levelComissions[level2] / 10, balance1 * levelComissions[level3] / 10])
+        const tx = await mlmSystem.connect(user3).withdraw()
+        tx.wait()
+        
+        expect(await ethers.provider.getBalance(user3.address)).to.equal(0);
+        expect(() => tx)
+                    .to
+                    .changeEtherBalances(
+                        [user2, user1], 
+                        [accBalanceUser3 * 1 / 10, accBalanceUser3 * 7 / 100]
+                    )
     })
 
-    it("The level of investments higher than 10", async function() {
-        await mockContract.mock
-            .transfer
-            .withArgs(mlmSystem.address, ethers.utils.parseEther((100 * 5 / 100).toString()))
-            .returns(true)
-
-        await mlmSystem
-            .connect(user4)
-            .invest({value: ethers.utils.parseEther("100")})
-
-        const sendMoney = await mlmSystem.connect(user4).invest({value: ethers.utils.parseEther("100")}) 
-        await sendMoney.wait()
-
-        const tx = await mlmSystem.getLevel(user4.address)
-        
-        console.log("Level with 100 ether =>", tx.toString())
-        expect(tx).to.eq(10)
+    it("The level of investments equal '0'", async function() {
+        // user4 balance - 0, function will be failed 
+        expect (mlmSystem.connect(user4).withdraw()).to.be.revertedWith("Your current balance is 0")
+        console.log("Your current balance is 0, level - 0")
     })
 
     it("It should return the info about direct partners", async function() {
         let levelsDone = [5, 1, 1]
+
+        await mockContract.mock
+            .transferFrom
+            .withArgs(user2.address, mlmSystem.address, ethers.utils.parseEther("0.1"))
+            .returns(true)
+
+        await mockContract.mock
+            .transferFrom
+            .withArgs(user2_2.address, mlmSystem.address, ethers.utils.parseEther("0.005"))
+            .returns(true)
+
+        await mockContract.mock
+            .transferFrom
+            .withArgs(user2_3.address, mlmSystem.address, ethers.utils.parseEther("0.005"))
+            .returns(true)
         
-        const tx = await mlmSystem.connect(user1).directPartnersInfo()
-        let amount = tx[0]
-        let levelsPartners = tx[1]
-        console.log(amount)
-        let levelsPartners2 = levelsPartners.map(item => item.toString() )
+        const [amountOfPartners, levels] = await mlmSystem
+            .connect(user1)
+            .directPartnersInfo()
+
+        console.log(amountOfPartners)
+        let levelsPartners2 = levels.map(item => item.toString())
         console.log(levelsPartners2)
 
-        expect(equalArrays(levelsDone, levelsPartners)).to.eq(true)
-        expect(levelsPartners.length).to.equal(amount)
+        expect(equalArrays(levelsDone.map(item => item.toString()), levelsPartners2)).to.equal(true)
+        expect(levelsDone.length).to.equal(amountOfPartners)
     })
 
 })
